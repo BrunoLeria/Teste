@@ -5,6 +5,7 @@
  */
 package teste;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -16,37 +17,54 @@ public class Teste {
 
     private Horta plantacao;
     private Robo bot;
-    private String[][] area;
+    private ArrayList<String[]> area;
+    private String[] linhaAuxiliar;
 
     public Teste() {
         this.plantacao = new Horta();
-        this.bot = new Robo(plantacao.getComprimento(), plantacao.getLargura());
-        this.area = new String[plantacao.getComprimento()][plantacao.getLargura()];
+        this.bot = new Robo(plantacao.getComprimento() - 1, plantacao.getLargura() - 1);
+        this.area = new ArrayList<>();
+        for (int i = 0; i < plantacao.getLargura(); i++) {      //Adiciona o número de linhas com as colunas dentro da matriz
+            area.add(new String[plantacao.getComprimento()]);
+        }
     }
 
     public void mostraInfo() {
-        for (String[] linha : area) {
+        area.stream().forEach((linha) -> {
+            //Desenha as linhas e o robô na sua posição inicial.
             for (int i = 0; i < linha.length; i++) {
-                linha[i] = "| |";
+                if(Arrays.equals(linha, area.get(bot.getPosicaoY()))&& i == bot.getPosicaoX())
+                    linha[i] = "|R|";
+                else
+                    linha[i] = "| |";
+                    
             }
-        }
-        area[bot.getPosicaoX()][bot.getPosicaoY()] = "|R|";
-        System.out.println("Posição Inicial: (" + (bot.getPosicaoX() + 1) + " ," + (bot.getPosicaoY() + 1) + ")");
+        });
+        System.out.println("Posição Inicial: (" + bot.getPosicaoX() + " ," + bot.getPosicaoY() + ")");
         System.out.println("Direção inicial:" + direcao());
 
         System.out.print("Canteiros a irrigar: ");
-        bot.getCanteiroirrigar().stream().forEach((ge) -> {
+        //Desenha na matriz onde está os lugares que o robo de irrigar
+        bot.getCanteiroirrigar().stream().forEach((ge) -> {     
             System.out.print(Arrays.toString(ge));
-            area[(ge[0] - 1)][(ge[1] - 1)] = "|i" + (bot.getCanteiroirrigar().lastIndexOf(ge) + 1) + "|";
+            linhaAuxiliar = area.get(ge[1]);
+            linhaAuxiliar[ge[0]] = "|i" + (bot.getCanteiroirrigar().lastIndexOf(ge) + 1) + "|";
+            area.remove(linhaAuxiliar);
+            area.add(ge[1], linhaAuxiliar);
         });
-        System.out.println("\n");
-        for (String[] linha : area) {
-            System.out.println(Arrays.toString(linha));
+        System.out.println("");
+        
+        for (int i = (area.size() - 1); i >= 0; i--) { // Imprime a martriz
+            System.out.println(i + Arrays.toString(area.get(i)));
         }
+        for (int i = 0; i <= (plantacao.getComprimento() - 1); i++) { // Imprime a martriz
+            System.out.print("   " + i + " ");
+        }
+        System.out.println("");
     }
 
-    public String direcao() {
-        switch (bot.getDirecao()) {
+    public String direcao() {           //Lista para converter um número em uma posição 
+        switch (bot.getDirecao()) {     //Usado na de dizer para onde o robô está virado no início e no final
             case 1:
                 return "Norte";
             case 2:
@@ -58,17 +76,18 @@ public class Teste {
         }
     }
 
-    public void movimento() {
+    public void movimento() {           
+        //Criação do registro do movimento do robô
         String resultado = "Caminho:";
         Integer x = bot.getPosicaoX();
         Integer y = bot.getPosicaoY();
         Integer destinoX;
         Integer destinoY;
         for (Integer[] canteiro : bot.getCanteiroirrigar()) {
-            destinoX = canteiro[1] - 1;
-            destinoY = canteiro[0] - 1;
+            destinoX = canteiro[0];
+            destinoY = canteiro[1];
             if (destinoX > x) {
-                switch (bot.getDirecao()) {
+                switch (bot.getDirecao()) { //Vira para Leste e soma a posição x do robô
                     case 1:
                         resultado += " D ";
                         break;
@@ -88,7 +107,7 @@ public class Teste {
                     x++;
                 }
             } else if (destinoX < x) {
-                switch (bot.getDirecao()) {
+                switch (bot.getDirecao()) { //Vira para Oeste e diminui a posição x do robô
                     case 1:
                         resultado += " E ";
                         break;
@@ -108,7 +127,7 @@ public class Teste {
                     x--;
                 }
             }
-            if (destinoY < y) {
+            if (destinoY > y) {             //Vira para Norte e aumanta a posição y do robô
                 switch (bot.getDirecao()) {
                     case 1:
                         break;
@@ -126,9 +145,9 @@ public class Teste {
 
                 while (!Objects.equals(destinoY, y)) {
                     resultado += " M ";
-                    y--;
+                    y++;
                 }
-            } else if (destinoY > y) {
+            } else if (destinoY < y) {          //Vira para Sul e diminui a posição y do robô
                 switch (bot.getDirecao()) {
                     case 1:
                         resultado += " D D ";
@@ -146,7 +165,7 @@ public class Teste {
                 bot.setDirecao(3);
                 while (!Objects.equals(destinoY, y)) {
                     resultado += " M ";
-                    y++;
+                    y--;
                 }
                 
             }
