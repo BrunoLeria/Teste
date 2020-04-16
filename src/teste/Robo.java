@@ -30,12 +30,14 @@ public class Robo {
     }
 
     public Robo(Integer maxX, Integer maxY) {
+        // Define a posição inicial do robô e recebe os limites da matriz da horta
         this.maxX = maxX;
         this.maxY = maxY;
-        this.posicaoX = verificaArea("Onde está o robo em relacão ao comprimento da horta?", "Posição", JOptionPane.QUESTION_MESSAGE, maxX) - 1;
-        this.posicaoY = verificaArea("Onde está o robo em relacão a largura da horta?", "Posição", JOptionPane.QUESTION_MESSAGE, maxY) - 1;
+        this.posicaoX = verificaArea("Onde está o robo em relacão ao comprimento da horta?", "Posição", JOptionPane.QUESTION_MESSAGE, maxX);
+        this.posicaoY = verificaArea("Onde está o robo em relacão a largura da horta?", "Posição", JOptionPane.QUESTION_MESSAGE, maxY);
 
         do {
+        // Define a direção inicial do robô
             direcao = Integer.parseInt(verificaEntrada("O robo está virado para:\n"
                     + "1.Norte\n"
                     + "2.Leste\n"
@@ -46,14 +48,16 @@ public class Robo {
                 JOptionPane.showMessageDialog(null, "Por favor, insira uma opção válida", "Erro", JOptionPane.ERROR_MESSAGE);
             }
         } while (direcao == 0);
-
+        
+        // Define qual é posição dos canteiros que o robô de irregar
         this.canteiroIrrigar = new ArrayList<>();
         int canteiroBool = 0;
-        do {
+        do {                        // Certifica se o usuário que colocar mais de uma posicão para ser regada
             Integer irrigar[] = new Integer[2];
             irrigar[0] = verificaArea("Onde está o canteiro que quer irrigar em relacão ao comprimento da horta?", "Canteiro", JOptionPane.QUESTION_MESSAGE, maxX);
             irrigar[1] = verificaArea("Onde está o canteiro que quer irrigar em relacão a largura da horta?", "Canteiro", JOptionPane.QUESTION_MESSAGE, maxY);
             canteiroIrrigar.add(irrigar);
+            // Certifica se o usuário que colocar mais de uma posicão para ser regada
             canteiroBool = JOptionPane.showConfirmDialog(null, "Deseja irrigar mais algum canteiro?", null, JOptionPane.YES_NO_OPTION);
         } while (canteiroBool == 0);
     }
@@ -91,6 +95,8 @@ public class Robo {
     }
     
     public String verificaEntrada(String descricao, String titulo , Integer tipoMensagem) {
+        // Verifica se o que foi digitado na entrada do JOpationpane é um número
+        // atravez de regex
         String input = "";
         do {
             input = JOptionPane.showInputDialog(null, descricao, titulo, tipoMensagem);
@@ -102,6 +108,8 @@ public class Robo {
     }
     
     public Integer verificaArea(String descricao, String titulo , Integer tipoMensagem, Integer max){
+        // Verifica se o que foi digitado na entrada do JOpationpane é maior que os limites da matriz
+        // atravez de regex
         Integer input = 0;
         do {
             input = Integer.parseInt(verificaEntrada(descricao, titulo , tipoMensagem));
