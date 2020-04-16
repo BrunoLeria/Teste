@@ -5,6 +5,7 @@
  */
 package teste;
 
+import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
 /**
@@ -15,7 +16,7 @@ public class Horta {
 
     private Integer comprimento;
     private Integer largura;
-    private String[][] area;
+    private ArrayList<String[]> area;
 
     public Horta(Integer comprimento, Integer largura, Robo bot) {
         this.comprimento = comprimento;
@@ -23,7 +24,8 @@ public class Horta {
     }
 
     public Horta() {
-        this.comprimento = Integer.parseInt(verificaEntrada("Qual é o tamanho do comprimento da horta?", "Comprimento"));
+        // Pede e converte para integer o tamanho do comprimento e largura, certificando que só há números.
+        this.comprimento = Integer.parseInt(verificaEntrada("Qual é o tamanho do comprimento da horta?", "Comprimento")); 
         this.largura = Integer.parseInt(verificaEntrada("Qual é o tamanho da largura da horta?", "Largura"));
     }
 
@@ -44,6 +46,8 @@ public class Horta {
     }
 
     public String verificaEntrada(String descricao, String titulo) {
+        // Verifica se o que foi digitado na entrada do JOpationpane é um número
+        // atravez de regex
         String input = "";
         do {
             input = JOptionPane.showInputDialog(null, descricao, titulo, JOptionPane.QUESTION_MESSAGE);
